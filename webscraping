@@ -1,0 +1,33 @@
+import requests
+from bs4 import BeautifulSoup
+
+# URL da página que contém a tabela HTML
+url = 'https://exemplo.com/tabela.html'
+
+# Fazendo uma requisição GET para obter o conteúdo da página
+response = requests.get(url)
+
+# Verifica se a requisição foi bem sucedida
+if response.status_code == 200:
+    # Analisando o conteúdo HTML da página
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Encontrando a tabela na página
+    tabela = soup.find('table')
+
+    # Verificando se a tabela foi encontrada
+    if tabela:
+        # Iterando sobre as linhas da tabela
+        linhas = tabela.find_all('tr')
+        for linha in linhas:
+            # Iterando sobre as células de cada linha
+            celulas = linha.find_all(['th', 'td'])
+            for celula in celulas:
+                # Imprimindo o texto de cada célula
+                print(celula.get_text())
+            print()  # Adiciona uma linha em branco entre as linhas da tabela
+    else:
+        print('Tabela não encontrada na página.')
+
+else:
+    print('Falha ao carregar a página:', response.status_code)
