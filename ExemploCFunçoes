@@ -1,0 +1,81 @@
+#include <stdio.h>
+
+// Função para calcular a média dos números no vetor
+float calcularMedia(int vetor[], int tamanho) {
+    int soma = 0;
+    for (int i = 0; i < tamanho; i++) {
+        soma += vetor[i];
+    }
+    return (float)soma / tamanho;
+}
+
+// Função para calcular a mediana dos números no vetor
+float calcularMediana(int vetor[], int tamanho) {
+    // Ordenar o vetor (utilizando um algoritmo de ordenação, como bubble sort)
+    for (int i = 0; i < tamanho - 1; i++) {
+        for (int j = 0; j < tamanho - i - 1; j++) {
+            if (vetor[j] > vetor[j + 1]) {
+                // Trocar os elementos de posição
+                int temp = vetor[j];
+                vetor[j] = vetor[j + 1];
+                vetor[j + 1] = temp;
+            }
+        }
+    }
+    
+    // Se o tamanho do vetor for ímpar, a mediana é o elemento do meio
+    // Se for par, a mediana é a média dos dois elementos do meio
+    if (tamanho % 2 == 0) {
+        return (float)(vetor[tamanho / 2 - 1] + vetor[tamanho / 2]) / 2.0;
+    } else {
+        return vetor[tamanho / 2];
+    }
+}
+
+// Função para calcular a moda dos números no vetor
+int calcularModa(int vetor[], int tamanho) {
+    int moda = vetor[0];
+    int frequencia = 1;
+    int maxFrequencia = 1;
+    
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] == vetor[i - 1]) {
+            frequencia++;
+        } else {
+            if (frequencia > maxFrequencia) {
+                maxFrequencia = frequencia;
+                moda = vetor[i - 1];
+            }
+            frequencia = 1;
+        }
+    }
+    
+    if (frequencia > maxFrequencia) {
+        moda = vetor[tamanho - 1];
+    }
+    
+    return moda;
+}
+
+int main() {
+    int tamanho;
+    printf("Digite o tamanho do vetor: ");
+    scanf("%d", &tamanho);
+    
+    int vetor[tamanho];
+    printf("Digite os %d números:\n", tamanho);
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &vetor[i]);
+    }
+    
+    float media = calcularMedia(vetor, tamanho);
+    printf("Média: %.2f\n", media);
+    
+    float mediana = calcularMediana(vetor, tamanho);
+    printf("Mediana: %.2f\n", mediana);
+    
+    int moda = calcularModa(vetor, tamanho);
+    printf("Moda: %d\n", moda);
+    
+    return 0;
+}
