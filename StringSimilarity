@@ -1,0 +1,30 @@
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+
+object StringSimilarity {
+  def main(args: Array[String]): Unit = {
+    val spark = SparkSession.builder()
+      .appName("StringSimilarity")
+      .getOrCreate()
+
+    import spark.implicits._
+
+    // Carregue seus dados
+    val df = Seq(
+      ("apple", "appla"),
+      ("banana", "banaba"),
+      ("cat", "dog")
+    ).toDF("str1", "str2")
+
+    // Calcule a distância de Levenshtein
+    val levenshteinDistanceUDF = udf { (str1: String, str2: String) =>
+      org.apache.commons.text.similarity.LevenshteinDistance.getDefaultInstance().apply(str1, str2)
+    }
+
+    val result = df.withColumn("levenshtein_distance", levenshteinDistanceUDF($"str1", $"str2"))
+
+    result.show()
+    
+    spark.stop()
+  }
+}
