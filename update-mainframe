@@ -1,0 +1,45 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. UPDATE-DB2.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+       01  SQL-CODE            PIC S9(9) COMP-4.
+       01  WS-COLUMN-VALUE     PIC X(100).
+       01  WS-NEW-VALUE        PIC X(100).
+
+       EXEC SQL
+           INCLUDE SQLCA
+       END-EXEC.
+
+       PROCEDURE DIVISION.
+       0000-MAIN-LOGIC.
+           PERFORM 1000-INITIALIZE
+           PERFORM 2000-PROCESS
+           PERFORM 3000-TERMINATE
+           STOP RUN.
+
+       1000-INITIALIZE.
+           MOVE 'NEW VALUE' TO WS-NEW-VALUE.
+
+       2000-PROCESS.
+           EXEC SQL
+               UPDATE TABLE-NAME
+               SET COLUMN-NAME = :WS-NEW-VALUE
+               WHERE COLUMN-NAME = :WS-COLUMN-VALUE
+           END-EXEC.
+           IF SQL-CODE NOT = 0
+               DISPLAY 'ERROR UPDATING DB2 TABLE: ' SQL-CODE
+           ELSE
+               DISPLAY 'DB2 TABLE UPDATED SUCCESSFULLY.'
+           END-IF.
+
+       3000-TERMINATE.
+           EXEC SQL
+               COMMIT
+           END-EXEC.
+           IF SQL-CODE NOT = 0
+               DISPLAY 'ERROR COMMITTING TRANSACTION: ' SQL-CODE
+           ELSE
+               DISPLAY 'TRANSACTION COMMITTED SUCCESSFULLY.'
+           END-IF.
